@@ -1,23 +1,24 @@
-from itertools import filterfalse
+"""Meta-class of Constant."""
 
+from itertools import filterfalse
 
 from constant.exc import ConstantError
 
 
 class ConstantMeta(type):
-    """Meta-class of Constant"""
+    """Meta-class of Constant."""
 
     _definition_only = False
 
     def __new__(mcls, classname, bases, dict):
-
+        """Magic method."""
         # Prohibit inheritance of different ConstantMeta.
         const_bases = [cls for cls in bases if isinstance(cls, ConstantMeta)]
         for cmp_cls in const_bases[1:]:
             if type(const_bases[0]) != type(cmp_cls):
                 fst_name = const_bases[0].__name__
                 cmp_name = cmp_cls.__name__
-                raise ConstantError(f"Can't inheritance of [{fst_name}] and [{cmp_name}] together")
+                raise ConstantError(f"Can't inheritance of [{fst_name}] and [{cmp_name}] together") # noqa
 
         # Prohibits class-variable collision.
         super_consts = set()
@@ -27,7 +28,7 @@ class ConstantMeta(type):
             if collision_consts:
                 collisions = ", ".join(collision_consts)
                 bname = base_cls.__name__
-                raise ConstantError(f"Constant [{collisions}] conflicts when inheriting class [{bname}]")
+                raise ConstantError(f"Constant [{collisions}] conflicts when inheriting class [{bname}]") # noqa
             super_consts |= base_consts
 
         # Prohibits class-variable redefinition.
@@ -47,7 +48,7 @@ class ConstantMeta(type):
 
     @classmethod
     def __get_constant_attr(mcls, dict):
-        """Gets a set of constant attributes that are treated as constants."""
+        """Get a set of constant attributes that are treated as constants."""
         # Gets a set of attributes other than magic attribute like __str__.
         attributes = set(atr for atr in dict)
         attributes = set(filterfalse(ConstantMeta.__is_magic_attr, attributes))
@@ -59,12 +60,12 @@ class ConstantMeta(type):
         indefinite_attr = attributes - (constant_attr | settable_attr)
         if indefinite_attr:
             indefinites = ", ".join(indefinite_attr)
-            raise ConstantError(f"Attribute [{indefinites}] is not constant or not settable.")
+            raise ConstantError(f"Attribute [{indefinites}] is not constant or not settable.") # noqa
         return constant_attr
 
     @staticmethod
     def __is_magic_attr(name):
-        """Determine if the attribute name is a magic attribute like __str__."""
+        """Determine if the attribute name is a magic attribute."""
         return name.startswith("__") and name.endswith("__")
 
     @classmethod
@@ -78,7 +79,7 @@ class ConstantMeta(type):
         return (not mcls._is_constant_attr(name))
 
     def __setattr__(cls, name, value):
-        # Get the meta-class of cls.
+        """Get the meta-class of cls."""
         mcls = type(cls)
         if mcls._is_constant_attr(name) or (not mcls._is_settable_attr(name)):
             raise ConstantError(f"Can't set attribute [{name}] to Constant")

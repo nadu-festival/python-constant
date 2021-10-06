@@ -1,3 +1,7 @@
+"""Exceptions of Constant."""
+
+
 class ConstantError(Exception):
-    """Exception of Constant"""
+    """Exception of Constant."""
+
     pass

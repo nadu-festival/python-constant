@@ -1,3 +1,5 @@
+"""Setup code."""
+
 from setuptools import setup
 
 setup(
