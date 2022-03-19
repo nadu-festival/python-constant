@@ -9,4 +9,5 @@ setup(
     author='nadu.festival',
     author_email='nadu.festival+git@gmail.com',
     url='https://github.com/nadu-festival/python-constant',
+    packages=['constant']
 )
